@@ -1,4 +1,4 @@
-﻿@model WebApplication1.Models.RoleViewModel
+﻿@model Microsoft.AspNet.Identity.EntityFramework.IdentityRole
 
 @{
     ViewBag.Title = "Create";
@@ -6,15 +6,15 @@
 
 <h2>Create</h2>
 
-@using (Html.BeginForm()) 
+<!-- @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
         <h4>RoleViewModel</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        
+
         <div class="form-group">
             @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -34,3 +34,27 @@
 <div>
     @Html.ActionLink("Back to List", "Index")
 </div>
+    -->
+
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    
+<div class="form-horizontal">
+    <div class="col-md-2">Enter Role Name to be Created</div>
+    <div class="col-md-10">
+         @Html.EditorFor(m => m.Name, new { htmlAttributes = new { @class = "form-control" } })
+
+
+    </div>
+
+   
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Create Role" class="btn btn-default" />
+        </div>
+   
+</div>
+}
+

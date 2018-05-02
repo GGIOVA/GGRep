@@ -13,22 +13,28 @@ using WebApplication1.Models;
 
 namespace WebApplication1.Controllers
 {
+
+   
+
     [Authorize]
     public class AccountController : Controller
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
         private ApplicationRoleManager _roleManager;
+        private ApplicationDbContext context;
 
         public AccountController()
         {
+            context = new ApplicationDbContext();
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, ApplicationRoleManager roleManager )
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, ApplicationRoleManager roleManager)
         {
             UserManager = userManager;
             SignInManager = signInManager;
             RoleManager = roleManager;
+            
         }
 
         public ApplicationRoleManager RoleManager
@@ -160,7 +166,7 @@ namespace WebApplication1.Controllers
             ViewBag.Roles = list;
             return View();
         }
-
+        
         //
         // POST: /Account/Register
         [HttpPost]
@@ -172,24 +178,49 @@ namespace WebApplication1.Controllers
             {
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
                 var result = await UserManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
-                {
-                    result = await UserManager.AddToRoleAsync(user.Id, model.RoleName);
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
-                    // Per altre informazioni su come abilitare la conferma dell'account e la reimpostazione della password, vedere https://go.microsoft.com/fwlink/?LinkID=320771
-                    // Inviare un messaggio di posta elettronica con questo collegamento
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Conferma account", "Per confermare l'account, fare clic <a href=\"" + callbackUrl + "\">qui</a>");
+                /*           if (result.Succeeded)
+                           {
+                               result = await UserManager.AddToRoleAsync(user.Id, model.RoleName);
+                               await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
 
-                    return RedirectToAction("Index", "Home");
-                }
+                               // Per altre informazioni su come abilitare la conferma dell'account e la reimpostazione della password, vedere https://go.microsoft.com/fwlink/?LinkID=320771
+                               // Inviare un messaggio di posta elettronica con questo collegamento
+                               // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                               // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                               // await UserManager.SendEmailAsync(user.Id, "Conferma account", "Per confermare l'account, fare clic <a href=\"" + callbackUrl + "\">qui</a>");
+
+                               return RedirectToAction("Index", "Home");
+                           }*/
                 AddErrors(result);
             }
 
             // Se si è arrivati a questo punto, significa che si è verificato un errore, rivisualizzare il form
             return View(model);
+        }
+
+        //new 2 methods
+      
+        [HttpGet]
+        public ActionResult RegisterRole()
+        {
+            ViewBag.Name = new SelectList(context.Roles.ToList(), "Name", "Name");
+            ViewBag.UserName = new SelectList(context.Users.ToList(), "UserName", "UserName");
+            return View();
+        }
+        [HttpPost]
+        
+        [Authorize(Roles ="Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> RegisterRole(RegisterViewModel model, ApplicationUser user)
+        {
+            var userId = context.Users.Where(i => i.UserName == user.UserName).Select(s => s.Id);
+            string updateId = "";
+            foreach(var i in userId)
+            {
+                updateId = i.ToString();  
+            }
+            await this.UserManager.AddToRolesAsync(updateId, model.Name);
+            return RedirectToAction("Index", "Home");
         }
 
         //
