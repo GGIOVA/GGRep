@@ -1,0 +1,40 @@
+﻿@model ShopWebApp.Models.RegisterViewModel
+@{
+    ViewBag.Title = "Associa Ruolo";
+}
+
+<h2>@ViewBag.Title.</h2>
+
+@using (Html.BeginForm("RegisterRole", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form"} ))
+{
+<div class="form-horizontal">
+
+    @Html.AntiForgeryToken()
+    <h4>Associa un ruolo ad un account</h4>
+    <hr />
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+    <div class="form-group">
+        @Html.Label("Seleziona utente", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DropDownList("Username", null, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.Label("Seleziona ruolo", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DropDownList("Name", null, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" class="btn btn-default" value="Registra" />
+        </div>
+    </div>
+
+</div>
+
+   
+
+}
