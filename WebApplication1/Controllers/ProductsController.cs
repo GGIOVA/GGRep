@@ -80,7 +80,7 @@ namespace WebApplication1.Controllers
         // Per ulteriori dettagli, vedere https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles ="Registered User")]
+        [Authorize]
         public ActionResult Edit([Bind(Include = "Id,Nome,Prezzo")] Product product)
         {
             if (ModelState.IsValid)
